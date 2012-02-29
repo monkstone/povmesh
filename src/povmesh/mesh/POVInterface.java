@@ -72,16 +72,23 @@ public interface POVInterface {
     /**
      * Track the number of normals written to file
      *
-     * @return
+     * @return current normal offset
      */
     int getCurrNormalOffset();
 
     /**
      * Track the number of vertices written to file
      *
-     * @return
+     * @return vertex offset
      */
     int getCurrVertexOffset();
+
+    /**
+     * Required to keep in sync with current option
+     *
+     * @return option Textures
+     */
+    Textures getTexture();
 
     /**
      * Write normal as PovRAY vector
@@ -89,6 +96,13 @@ public interface POVInterface {
      * @param n
      */
     void normal(Vec3D n);
+
+    /**
+     * Required to keep in sync with current option
+     *
+     * @param opt
+     */
+    void setTexture(Textures opt);
 
     /**
      * Used to output total count vertex_vector, normal_vector & face_indices

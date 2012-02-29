@@ -1,6 +1,8 @@
 package test;
 
+import java.io.File;
 import povmesh.mesh.POVMesh;
+import povmesh.mesh.Textures;
 import processing.core.PApplet;
 import toxi.geom.AABB;
 import toxi.geom.Matrix4x4;
@@ -9,6 +11,10 @@ import toxi.geom.mesh.Mesh3D;
 import toxi.geom.mesh.TriangleMesh;
 import toxi.processing.ToxiclibsSupport;
 
+/**
+ *
+ * @author Martin Prout
+ */
 public class MeshAlign extends PApplet {
 
     /**
@@ -41,9 +47,12 @@ public class MeshAlign extends PApplet {
     TriangleMesh[] boxes = new TriangleMesh[300];
     ToxiclibsSupport gfx;
 
+    /**
+     *
+     */
     @Override
     public void setup() {
-        size(1000, 1000, P3D);
+        size(1000, 1000, OPENGL);
         gfx = new ToxiclibsSupport(this);
         for (int i = 0; i < boxes.length; i++) {
             // create a new direction vector for each box
@@ -62,6 +71,9 @@ public class MeshAlign extends PApplet {
         }
     }
 
+    /**
+     *
+     */
     @Override
     public void draw() {
         background(51);
@@ -76,15 +88,27 @@ public class MeshAlign extends PApplet {
         }
     }
 
+    /**
+     *
+     */
     @Override
     public void keyPressed() {
-        String fileID = "mesh_align";//+(System.currentTimeMillis()/1000);
-        POVMesh pm = new POVMesh(this);
-        pm.beginSave(createWriter(sketchPath(fileID + ".inc")));
-        pm.saveAsPOV(boxes, false); // calculated normals are crap
-        pm.endSave();
+        if (key == 's') {
+            noLoop();
+            String fileID = "mesh_align";//+(System.currentTimeMillis()/1000);
+            POVMesh pm = new POVMesh(this);
+            pm.beginSave(new File(sketchPath(fileID + ".inc")));
+            pm.setTexture(Textures.GLASS);
+            pm.saveAsMesh(boxes, false); // calculated normals are crap
+            pm.endSave();
+            exit();
+        }
     }
 
+    /**
+     *
+     * @param args
+     */
     public static void main(String args[]) {
         PApplet.main(new String[]{"--bgcolor=#DFDFDF", "test.MeshAlign"});
     }

@@ -20,6 +20,7 @@
  */
 package povmesh.mesh;
 
+import java.io.File;
 import java.io.PrintWriter;
 import processing.core.PApplet;
 import toxi.geom.mesh.Face;
@@ -36,28 +37,38 @@ public class POVMesh {
 
     private PrintWriter pw;
     private POVWriter pov;
-    private Options opt;
+    private Textures opt;
     /**
-     * 
+     *
      */
-    public final String VERSION = "0.5";
+    public final String VERSION = "0.55";
 
     /**
      * Default constructor this mesh no texture
-     * @param app 
+     *
+     * @param app
      */
     public POVMesh(PApplet app) {
         app.registerDispose(this);
-        opt = Options.RAW;
+
     }
-    
+
     /**
-     * Default constructor this mesh opt texture selection
+     * Default constructor this mesh no texture
+     *
      * @param app
-     * @param opt  
+     * @param opt
      */
-    public POVMesh(PApplet app, Options opt) {
-        app.registerDispose(this);
+//    public POVMesh(PApplet app, Textures opt) {
+//        app.registerDispose(this);
+//        this.opt = opt;
+//    }
+    /**
+     * Allows the option to change texture option per mesh
+     *
+     * @param opt
+     */
+    public void setTexture(Textures opt) {
         this.opt = opt;
     }
 
@@ -65,31 +76,38 @@ public class POVMesh {
      * Saves the mesh as PovRAY mesh2 format by appending it to the given mesh
      * {@link POVWriter} instance. Saves normals.
      *
-     * @param meshArray 
+     * @param meshArray
      */
-    protected void saveAsPOV(TriangleMesh[] meshArray) {
-        saveAsPOV(meshArray, true);
+    public void saveAsPOV(TriangleMesh[] meshArray) {
+        saveAsMesh(meshArray, true);
+    }
+    
+    public void saveAsPOV(TriangleMesh[] meshArray, int modulus) {
+        saveAsMesh(meshArray, true);
     }
 
     /**
      * Saves the mesh as PovRAY mesh2 format by appending it to the given mesh
      * {@link POVWriter} instance. Saves normals.
      *
-     * @param mesh 
+     * @param mesh
      */
-    protected void saveAsPOV(TriangleMesh mesh) {
+    public void saveAsPOV(TriangleMesh mesh) {
         saveAsPOV(mesh, true);
-    }   
-    
+    }
 
     /**
      * Saves the mesh as PovRAY mesh2 format to the given {@link PrintWriter}.
-     * Without normals (when saveNormal is false)
+     * Without normals (when saveNormal is false), checks if option has changed,
+     * changes option if required (implies serial use of saveAsPov)
      *
-     * @param mesh 
+     * @param mesh
      * @param saveNormals boolean
      */
     public void saveAsPOV(TriangleMesh mesh, boolean saveNormals) {
+        if (opt != pov.getTexture()) {
+            pov.setTexture(opt);
+        }
         pov.beginMesh2(mesh.name);
         int vOffset = pov.getCurrVertexOffset();
         // vertices
@@ -118,12 +136,16 @@ public class POVMesh {
 
     /**
      * Saves the mesh as PovRAY mesh2 format to the given {@link PrintWriter}.
-     * Without normals (when saveNormal is false)
+     * Without normals (when saveNormal is false) Check on option is included
+     * for completeness
      *
-     * @param meshArray 
+     * @param meshArray
      * @param saveNormals boolean
      */
-    public void saveAsPOV(TriangleMesh[] meshArray, boolean saveNormals) {
+    public void saveAsMesh(TriangleMesh[] meshArray, boolean saveNormals) {
+        if (opt != pov.getTexture()) {
+            pov.setTexture(opt);
+        }
         for (TriangleMesh mesh : meshArray) {
             pov.beginMesh2(mesh.name);
             int vOffset = pov.getCurrVertexOffset();
@@ -152,23 +174,26 @@ public class POVMesh {
         }
     }
 
+
+
     /**
-     * Strart writing *.inc file  
-     * @param pw 
+     * Start writing *.inc file
+     *
+     * @param fileName main.inc File
      */
-    public void beginSave(PrintWriter pw) {
-        this.pw = pw;
-        this.pov = new POVWriter(pw, opt);
+    public void beginSave(File fileName) {
+        opt = Textures.RAW;
+        this.pov = new POVWriter(fileName);
         pov.beginForeground();
     }
 
     /**
-     * Finish writing *.inc file and close PrintWriter 
+     * Finish writing *.inc file and close PrintWriter
      */
     public void endSave() {
         pov.endForeground();
-        pw.flush();
-        pw.close();
+        //pw.flush();
+        //pw.close();
     }
 
     /**
@@ -180,7 +205,8 @@ public class POVMesh {
 
     /**
      * Required by processing
-     * @return
+     *
+     * @return version String
      */
     public String version() {
         return VERSION;

@@ -12,7 +12,7 @@ import toxi.geom.mesh.TriangleMesh;
  * 
  * @author Martin Prout
  */
-public class FTestPOV extends PApplet {
+public class BoxTest extends PApplet {
 
     /**
      * <p>POVSimpleExport demonstrates how to save a model as PovRAY mesh2
@@ -41,28 +41,19 @@ public class FTestPOV extends PApplet {
      */
     @Override
     public void setup() {
-        // define a rounded cube using the SuperEllipsoid surface function
-        AABB vert = AABB.fromMinMax(new Vec3D(-1.0f, -3.5f, -1.0f), 
-                new Vec3D(1.0f, 3.5f, 1.0f));
-        AABB box = AABB.fromMinMax(new Vec3D(1.0f, 1.5f, -1.0f), 
-                new Vec3D(3.0f, 3.5f, 1.0f));
-        AABB box2 = AABB.fromMinMax(new Vec3D(1.0f, -2.5f, -1.0f), 
-                new Vec3D(3.0f, -0.5f, 1.0f));
-        TriangleMesh[] meshArray = new TriangleMesh[3];
+        AABB box = AABB.fromMinMax(new Vec3D(1.0f, 1.0f, 1.0f), 
+                new Vec3D(-1.0f, -1.0f, -1.0f));
+
+        TriangleMesh[] meshArray = new TriangleMesh[1];
         TriangleMesh mesh0 = (TriangleMesh) box.toMesh();
-        TriangleMesh mesh1 = ((TriangleMesh) vert.toMesh());
-        TriangleMesh mesh2 = ((TriangleMesh) box2.toMesh());
+        meshArray[0] = mesh0;
         // attempt to create a FileOutputStream and save to it 
 
         String fileID = "FTest";//+(System.currentTimeMillis()/1000);
         POVMesh pm = new POVMesh(this);//, Textures.MIRROR);
         pm.beginSave(new File(sketchPath(fileID + ".inc")));
         pm.setTexture(Textures.MIRROR);
-        pm.saveAsPOV(mesh0, false); // calculated normals are crap
-        pm.setTexture(Textures.RED);
-        pm.saveAsPOV(mesh1, false); 
-        pm.setTexture(Textures.WHITE);
-        pm.saveAsPOV(mesh2, false); 
+        pm.saveAsMesh(meshArray, false); // calculated normals are crap
         pm.endSave();
         exit();
     }
@@ -72,6 +63,7 @@ public class FTestPOV extends PApplet {
      * @param args
      */
     static public void main(String args[]) {
-        PApplet.main(new String[]{"--bgcolor=#DFDFDF", "test.FTestPOV"});
+        PApplet.main(new String[]{"--bgcolor=#DFDFDF", "test.BoxTest"});
     }
 }
+

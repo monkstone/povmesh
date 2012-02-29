@@ -25,7 +25,7 @@ package povmesh.mesh;
  * Used to set PovRAY texture options
  * @author Martin Prout
  */
-public enum Options {
+public enum Textures {
 
     /**
      * Original geometry output, no texture
@@ -72,14 +72,20 @@ public enum Options {
      * Geometry output, with phong texture
      * and alternate color (B&W) 
      */
-    TWOTONE("Alternate B&W texture");
+    TWOTONE("Alternate B&W texture"),
+    
+    /**
+     * Geometry output, with mirror
+     * finish 
+     */
+    MIRROR("Perfect mirror");
     
     /**
      * Description String
      */
     public String description;
 
-    Options(String description) {
+    Textures(String description) {
         this.description = description;
     }
 

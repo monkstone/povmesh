@@ -55,6 +55,7 @@ public class TextureBuilder {
     static final String FINISH5 = "finish{ F_Glass5 }";
     static final String MFINISHE = "finish{ F_MetalE }";
     static final String PHONG = "finish{ Phong1 }";
+    static final String MIRROR = "finish{ reflection 1}";
 
     /**
      *
@@ -67,16 +68,18 @@ public class TextureBuilder {
         rainbowColor.append(vals[(int) Math.round((Math.random() * 9))].getColor());
         return rainbowColor.append(" }");
     }
+    
+   
 
     /**
      *
      * @return transparent rainbow color (sequence)
      */
-    static StringBuilder getRCTrans() {
+    static StringBuilder getRCTrans(int modulus) {
         RCTransp[] vals = RCTransp.values();
         StringBuilder rainbowColor = new StringBuilder(100);
         rainbowColor.append("pigment{ ");
-        rainbowColor.append(vals[count % 10].getColor());
+        rainbowColor.append(vals[count % modulus].getColor());
         count++;
         return rainbowColor.append(" }");
     }
@@ -101,11 +104,11 @@ public class TextureBuilder {
      *
      * @return opaque rainbow color (sequence)
      */
-    static StringBuilder getRCOpaque() {
+    static StringBuilder getRCOpaque(int modulus) {
         RCOpaque[] vals = RCOpaque.values();
         StringBuilder rainbowColor = new StringBuilder(100);
         rainbowColor.append("pigment{ ");
-        rainbowColor.append(vals[count % 10].getColor());
+        rainbowColor.append(vals[count % modulus].getColor());
         count++;
         return rainbowColor.append(" }");
     }
@@ -116,6 +119,15 @@ public class TextureBuilder {
      */
     static String getWhite() {
         return "pigment{ color rgb<1, 1, 1> }";
+    }
+    
+    /**
+     *
+     * @return Black
+     */
+    static String getBlack() {
+        
+        return "pigment{ color rgb <0, 0, 0> }";
     }
 
     /**
