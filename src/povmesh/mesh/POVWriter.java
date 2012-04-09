@@ -39,7 +39,7 @@ public class POVWriter implements POVInterface {
     /**
      *
      */
-    public final String VERSION = "0.56";
+    public final String VERSION = "0.58";
     /**
      *
      */
@@ -130,6 +130,12 @@ public class POVWriter implements POVInterface {
                 povWriter.println(TextureBuilder.getBlack());
                 povWriter.println(TextureBuilder.MIRROR);
                 break;
+            case MARBLE:
+                povWriter.println(TextureBuilder.getMarble());
+                break;
+            case CHROME:
+                povWriter.println(TextureBuilder.getChrome());
+                break;
             default:
                 break;
         }
@@ -188,6 +194,12 @@ public class POVWriter implements POVInterface {
             case PHONG:
                 pw.println(TextureBuilder.declareRCOpaque());
                 pw.println(TextureBuilder.DPHONG);
+                break;
+            case MARBLE:
+                pw.println(TextureBuilder.declareMarble());
+                break;
+            case CHROME:
+                pw.println(TextureBuilder.DMFINISHE);
                 break;
             case RED:
             case TWOTONE:

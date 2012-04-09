@@ -4,6 +4,7 @@ import java.io.File;
 import povmesh.mesh.POVMesh;
 import povmesh.mesh.Textures;
 import processing.core.PApplet;
+import toxi.color.TColor;
 import toxi.geom.AABB;
 import toxi.geom.Matrix4x4;
 import toxi.geom.Vec3D;
@@ -52,7 +53,7 @@ public class MeshAlign extends PApplet {
      */
     @Override
     public void setup() {
-        size(1000, 1000, OPENGL);
+        size(400, 400, P3D);
         gfx = new ToxiclibsSupport(this);
         for (int i = 0; i < boxes.length; i++) {
             // create a new direction vector for each box
@@ -67,8 +68,10 @@ public class MeshAlign extends PApplet {
             // move the box to the correct position
             b.transform(new Matrix4x4().translateSelf(pos.x, pos.y, pos.z));
             b.setName(String.format("obj%d", i));
+            gfx.fill(TColor.WHITE);
             boxes[i] = b;
         }
+        frameRate(15);
     }
 
     /**
@@ -77,14 +80,14 @@ public class MeshAlign extends PApplet {
     @Override
     public void draw() {
         background(51);
-        lights();
+
         translate(width / 2, height / 2, 0);
         rotateX(mouseY * 0.01f);
         rotateY(mouseX * 0.01f);
-        noStroke();
+        // noStroke();
         for (int i = 0; i < boxes.length; i++) {
+            gfx.setStrokeFill(false, TColor.newRandom());
             gfx.mesh(boxes[i]);
-
         }
     }
 
@@ -95,7 +98,7 @@ public class MeshAlign extends PApplet {
     public void keyPressed() {
         if (key == 's') {
             noLoop();
-            String fileID = "mesh_align";//+(System.currentTimeMillis()/1000);
+            String fileID = "mesh_align";
             POVMesh pm = new POVMesh(this);
             pm.beginSave(new File(sketchPath(fileID + ".inc")));
             pm.setTexture(Textures.GLASS);

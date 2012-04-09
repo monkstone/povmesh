@@ -52,11 +52,44 @@ public class TextureBuilder {
             + "\troughness 1/120\n"
             + "\treflection 0.8\n"
             + "}";
+    
+
+    
+/**
+ * pink marble
+ */    
+static final String MARBLE_TEXTURE = "#declare T_Grnt28 = "
++ "texture {\n"
++ "pigment\n"
+ + "{marble\n"
+ + " turbulence 0.7\n"
+ + " color_map\n"
+ + "{[0.000, 0.155   color rgbt <0.686, 0.235, 0.282, 0.000>\n"
+ + "                 color rgbt <0.686, 0.235, 0.282, 0.000>]\n"
+ + " [0.155, 0.328   color rgbt <0.686, 0.235, 0.282, 0.000>\n"
+ + "                 color rgbt <0.494, 0.243, 0.294, 0.000>]\n"
+ + " [0.328, 0.474   color rgbt <0.494, 0.243, 0.294, 0.000>\n"
+ + "                color rgbt <0.769, 0.329, 0.373, 0.000>]\n"
+ + " [0.474, 0.647   color rgbt <0.769, 0.329, 0.373, 0.000>\n"
+ + "                 color rgbt <0.769, 0.329, 0.373, 0.000>]\n"
+ + " [0.647, 0.810   color rgbt <0.769, 0.329, 0.373, 0.000>\n"
+ + "                color rgbt <0.686, 0.235, 0.282, 0.000>]\n"
+ + " [0.810, 0.922   color rgbt <0.686, 0.235, 0.282, 0.000>\n"
+ + "                 color rgbt <0.792, 0.388, 0.427, 0.000>]\n"
+ + " [0.922, 1.001   color rgbt <0.792, 0.388, 0.427, 0.000>\n"
+ + "                 color rgbt <0.686, 0.235, 0.282, 0.000>]\n"
+ + "  }\n"
+ + "}\n"
+ + "finish {\n"
+ + "crand 0.03\n"
+ + "}\n"
+ + " }\n" ;      
+            
     static final String FINISH5 = "finish{ F_Glass5 }";
     static final String MFINISHE = "finish{ F_MetalE }";
     static final String PHONG = "finish{ Phong1 }";
     static final String MIRROR = "finish{ reflection 1}";
-
+    static final String RED_MARBLE = "texture{ T_Grnt28 }";
     /**
      *
      * @return random rainbow color (with transparency)
@@ -99,7 +132,15 @@ public class TextureBuilder {
         }
         return declare;
     }
-
+    
+    
+    /**
+     *
+     * @return pink marble declaration
+     */
+    static String declareMarble() {
+        return MARBLE_TEXTURE;
+    }
     /**
      *
      * @return opaque rainbow color (sequence)
@@ -128,6 +169,26 @@ public class TextureBuilder {
     static String getBlack() {
         
         return "pigment{ color rgb <0, 0, 0> }";
+    }
+    
+    /**
+     *
+     * @return Chrome
+     */
+    static StringBuilder getChrome() {
+        StringBuilder col  = new StringBuilder();
+        col.append("texture{\npigment {color rgb <0.95, 0.95, 0.95>}\n");
+        col.append(TextureBuilder.MFINISHE);
+        return col.append("\n}\n");
+    }
+    
+    /**
+     *
+     * @return Pink Marble
+     */
+    static StringBuilder getMarble() {
+        StringBuilder col  = new StringBuilder(TextureBuilder.RED_MARBLE);
+        return col;
     }
 
     /**

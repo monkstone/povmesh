@@ -31,6 +31,11 @@ public enum Textures {
      * Original geometry output, no texture
      */
     RAW("Raw geometry"),
+    
+    /**
+     * Geometry output, chrome texture
+     */
+    CHROME("Shiny Metal"),
 
     
     /**
@@ -40,10 +45,16 @@ public enum Textures {
     GLASS("Glass texture"),
     
     /**
-     * Geometry output, with metal texture
+     * Geometry output, with marble texture
+     * xlassic marble
+     */
+    METAL("Marble texture"),
+    
+    /**
+     * Geometry output, with marble texture
      * rainbow colors
      */
-    METAL("Metal texture"),
+    MARBLE("Marble texture"),
     
         
     /**
