@@ -21,8 +21,8 @@
 package povmesh.mesh;
 
 import java.io.File;
-import java.io.PrintWriter;
 import processing.core.PApplet;
+import processing.event.KeyEvent;
 import toxi.geom.mesh.Face;
 import toxi.geom.mesh.TriangleMesh;
 import toxi.geom.mesh.Vertex;
@@ -33,15 +33,16 @@ import toxi.geom.mesh.Vertex;
  *
  * @author Martin Prout
  */
+
 public class POVMesh {
 
-    private PrintWriter pw;
+//    private PrintWriter pw;
     private POVWriter pov;
     private Textures opt;
     /**
      *
      */
-    public final String VERSION = "0.55";
+    static String VERSION = "0.57";
 
     /**
      * Default constructor this mesh no texture
@@ -49,7 +50,8 @@ public class POVMesh {
      * @param app
      */
     public POVMesh(PApplet app) {
-        app.registerDispose(this);
+        app.registerMethod("dispose", this);
+        app.registerMethod("keyEvent", this);
 
     }
 
@@ -82,6 +84,11 @@ public class POVMesh {
         saveAsMesh(meshArray, true);
     }
     
+    /**
+     *
+     * @param meshArray
+     * @param modulus
+     */
     public void saveAsPOV(TriangleMesh[] meshArray, int modulus) {
         saveAsMesh(meshArray, true);
     }
@@ -194,6 +201,25 @@ public class POVMesh {
         pov.endForeground();
         //pw.flush();
         //pw.close();
+    }
+    
+    
+    /**
+     *
+     * @param e
+     */
+    public void keyEvent(KeyEvent e){
+        if (e.getAction() == KeyEvent.RELEASED){
+            switch(e.getKey()){
+                case 't':
+                case 'T':
+                    System.out.println("tracing");
+                    break;
+            
+            }
+        
+        }
+    
     }
 
     /**

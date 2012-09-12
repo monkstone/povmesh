@@ -36,6 +36,7 @@ import toxi.geom.Vec3D;
 public class POVWriter implements POVInterface {
 
     final String COMMA = ", ";
+    final String eol = System.getProperty("line.separator");
     /**
      *
      */
@@ -52,14 +53,14 @@ public class POVWriter implements POVInterface {
      * Track the number of normals written to file
      */
     protected int numNormalsWritten = 0;
-    private Textures opt;
+    private volatile Textures opt;
     private EnumSet<Textures> declaredOpt;
     private String spath;
 
     /**
-     * Handles PrintWriter input
+     * Handles File input
      *
-     * @param pw
+     * @param meshObj
      */
 //    public POVWriter(PrintWriter pw) {
 //        this.opt = Textures.RAW;
@@ -71,7 +72,7 @@ public class POVWriter implements POVInterface {
         this.opt = Textures.RAW;
         spath = meshObj.getParent();
         try {
-            this.povWriter = new PrintWriter(new BufferedWriter(new FileWriter(meshObj)));
+            this.povWriter = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(meshObj),"UTF8")));
         } catch (IOException ex) {
             Logger.getLogger(POVWriter.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -229,12 +230,18 @@ public class POVWriter implements POVInterface {
     public void beginMesh2(String name) {
         numVerticesWritten = 0;
         numNormalsWritten = 0;
-        StringBuilder pov = new StringBuilder("mesh2{\n");
-        pov.append(String.format("/** %s */\n", name));
+        StringBuilder pov = new StringBuilder(30);
+        pov.append("mesh2{");
+        pov.append(eol);
+        pov.append(String.format("/** %s */%s", name, eol));
         pov.append("\tvertex_vectors {");
         povWriter.println(pov);
     }
 
+    /**
+     *
+     * @param v
+     */
     public void beginBox(Vec3D v) {
         StringBuilder pov = new StringBuilder("box{");
         pov.append('<').append(v.x);
@@ -244,13 +251,17 @@ public class POVWriter implements POVInterface {
         povWriter.print(pov);
     }
 
+    /**
+     *
+     * @param v
+     */
     public void endBox(Vec3D v) {
         StringBuilder pov = new StringBuilder();
         pov.append('<').append(v.x);
         pov.append(COMMA).append(v.y);
         pov.append(COMMA).append(v.z);
-        pov.append('>').append("}\n");
-        povWriter.print(pov);
+        pov.append('>').append("}");
+        povWriter.println(pov);
     }
 
     /**
@@ -368,7 +379,8 @@ public class POVWriter implements POVInterface {
      * Begin writing union of mesh objects
      */
     protected void beginForeground() {
-        povWriter.append("#declare mesh_objects = union {\n");
+        povWriter.append("#declare mesh_objects = union {");
+        povWriter.append(eol);
     }
 
     /**
@@ -378,29 +390,30 @@ public class POVWriter implements POVInterface {
     protected void endForeground() {
         povWriter.append("rotate");
         povWriter.append(buildVector(0.0f, 15.0f, 0.0f));
-        povWriter.append('\n');
+        povWriter.append(eol);
         povWriter.append("scale");
         povWriter.append(buildVector(0.5f, 0.5f, 0.5f));
-        povWriter.append('\n');
+        povWriter.append(eol);
         povWriter.append("translate");
         povWriter.append(buildVector(0.0f, 0.0f, 0.0f));
-        povWriter.append('\n');
-        povWriter.append("}\n");
-        PrintWriter pw = null;
+        povWriter.append(eol);
+        povWriter.append("}");
+        povWriter.append(eol);
+        
         String outFile = spath + File.separator + "my_texture.inc";
         // if (declaredOpt.size() > 1) { // guard against only RAW
         try {
-            pw = new PrintWriter(new BufferedWriter(new FileWriter(outFile)));
-            pw.append(String.format("// %s\n", outFile));
+            PrintWriter pw;
+            pw = new PrintWriter(new File(outFile),"UTF8");
+            pw.append(String.format("// %s%s", outFile, eol));
             for (Textures dopt : declaredOpt) {
                 declareTexture(pw, dopt);
             }
             pw.flush();
+            pw.close();
         } catch (IOException ex) {
             Logger.getLogger(POVWriter.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            pw.close();
-        }
+        } 
         // } // but maybe not
         povWriter.flush();
         povWriter.close();
