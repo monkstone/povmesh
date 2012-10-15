@@ -4,19 +4,19 @@ import java.io.File;
 import povmesh.mesh.POVMesh;
 import povmesh.mesh.Textures;
 import processing.core.PApplet;
-import toxi.color.TColor;
+import processing.core.PShape;
 import toxi.geom.AABB;
 import toxi.geom.Matrix4x4;
 import toxi.geom.Vec3D;
+import toxi.geom.mesh.Face;
 import toxi.geom.mesh.Mesh3D;
 import toxi.geom.mesh.TriangleMesh;
-import toxi.processing.ToxiclibsSupport;
 
 /**
  *
  * @author Martin Prout
  */
-public class MeshAlign extends PApplet {
+public class VBOMeshAlign extends PApplet {
 
     /**
      * This example shows how to dynamically create a simple box mesh and align
@@ -46,7 +46,8 @@ public class MeshAlign extends PApplet {
     float SCALE = 130;
     // TriangleMesh[] boxes = new TriangleMesh[300];
     TriangleMesh[] boxes = new TriangleMesh[300];
-    ToxiclibsSupport gfx;
+    PShape[] shapes;
+    boolean record = false;
 
     /**
      *
@@ -54,7 +55,6 @@ public class MeshAlign extends PApplet {
     @Override
     public void setup() {
         size(400, 400, P3D);
-        gfx = new ToxiclibsSupport(this);
         for (int i = 0; i < boxes.length; i++) {
             // create a new direction vector for each box
             Vec3D dir = new Vec3D(cos(i * TWO_PI / 75), sin(i * TWO_PI / 50), sin(i * TWO_PI / 25)).normalize();
@@ -68,9 +68,10 @@ public class MeshAlign extends PApplet {
             // move the box to the correct position
             b.transform(new Matrix4x4().translateSelf(pos.x, pos.y, pos.z));
             b.setName(String.format("obj%d", i));
-            gfx.fill(TColor.WHITE);
             boxes[i] = b;
         }
+        noStroke();
+        shapes = meshToRetained(boxes, false);
         frameRate(15);
     }
 
@@ -79,15 +80,28 @@ public class MeshAlign extends PApplet {
      */
     @Override
     public void draw() {
-        background(51);
+        if (record) {
+            noLoop();
+            String fileID = "mesh_align";
+            POVMesh pm = new POVMesh(this);
+            pm.beginSave(new File(sketchPath(fileID + ".inc")));
+            pm.setTexture(Textures.GLASS);
+            pm.saveAsMesh(boxes, false); // calculated normals are crap
+            pm.endSave();
+            exit();
+        } else {
+            background(51);
+            lights();
+            lightSpecular(80, 80, 80);
+            directionalLight(80, 80, 80, 0, 0, -1);
+            ambientLight(50, 50, 50);
+            translate(width / 2, height / 2, 0);
+            rotateX(mouseY * 0.01f);
+            rotateY(mouseX * 0.01f);
+            for (PShape sh : shapes) {
+                shape(sh);
+            }
 
-        translate(width / 2, height / 2, 0);
-        rotateX(mouseY * 0.01f);
-        rotateY(mouseX * 0.01f);
-        // noStroke();
-        for (int i = 0; i < boxes.length; i++) {
-            gfx.setStrokeFill(false, TColor.newRandom());
-            gfx.mesh(boxes[i]);
         }
     }
 
@@ -97,14 +111,7 @@ public class MeshAlign extends PApplet {
     @Override
     public void keyPressed() {
         if (key == 's') {
-            noLoop();
-            String fileID = "mesh_align";
-            POVMesh pm = new POVMesh(this);
-            pm.beginSave(new File(sketchPath(fileID + ".inc")));
-            pm.setTexture(Textures.GLASS);
-            pm.saveAsMesh(boxes, false); // calculated normals are crap
-            pm.endSave();
-            exit();
+            record = true;
         }
     }
 
@@ -113,6 +120,43 @@ public class MeshAlign extends PApplet {
      * @param args
      */
     public static void main(String args[]) {
-        PApplet.main(new String[]{"--bgcolor=#DFDFDF", "test.MeshAlign"});
+        PApplet.main(new String[]{"--bgcolor=#DFDFDF", "test.VBOMeshAlign"});
+    }
+
+    PShape meshToVBO(Mesh3D mesh, boolean smth) {
+        PShape retained = createShape(TRIANGLES);
+        retained.enableStyle();
+        retained.fill(random(255), random(255), random(255));
+        retained.ambient(50);
+        retained.shininess(10);
+        retained.specular(50);
+        if (smth) {
+            mesh.computeVertexNormals();
+            for (Face f : mesh.getFaces()) {
+                retained.normal(f.a.normal.x, f.a.normal.y, f.a.normal.z);
+                retained.vertex(f.a.x, f.a.y, f.a.z);
+                retained.normal(f.b.normal.x, f.b.normal.y, f.b.normal.z);
+                retained.vertex(f.b.x, f.b.y, f.b.z);
+                retained.normal(f.c.normal.x, f.c.normal.y, f.c.normal.z);
+                retained.vertex(f.c.x, f.c.y, f.c.z);
+            }
+        } else {
+            for (Face f : mesh.getFaces()) {
+                retained.normal(f.normal.x, f.normal.y, f.normal.z);
+                retained.vertex(f.a.x, f.a.y, f.a.z);
+                retained.vertex(f.b.x, f.b.y, f.b.z);
+                retained.vertex(f.c.x, f.c.y, f.c.z);
+            }
+        }
+        retained.end();
+        return retained;
+    }
+
+    PShape[] meshToRetained(Mesh3D[] mesh, boolean smth) {
+        PShape[] rshapes = new PShape[mesh.length];
+        for (int i = 0; i < mesh.length; i++) {
+            rshapes[i] = meshToVBO(mesh[i], smth);
+        }
+        return rshapes;
     }
 }

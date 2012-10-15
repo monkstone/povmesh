@@ -1,22 +1,23 @@
 package test;
 
-import java.io.File;
-import povmesh.mesh.POVMesh;
-import povmesh.mesh.Textures;
 import processing.core.PApplet;
+import processing.core.PShape;
 import toxi.geom.AABB;
 import toxi.geom.Vec3D;
+import toxi.geom.mesh.Face;
+import toxi.geom.mesh.Mesh3D;
 import toxi.geom.mesh.TriangleMesh;
+import toxi.processing.ToxiclibsSupport;
 
 /**
- * 
+ *
  * @author Martin Prout
  */
-public class BoxTest extends PApplet {
+public class VBOBoxTest extends PApplet {
 
     /**
      * <p>POVSimpleExport demonstrates how to save a model as PovRAY mesh2
-     * format to a generic Java PrintWriter NB: uses createWriter convenience 
+     * format to a generic Java PrintWriter NB: uses createWriter convenience
      * method</p>
      */
 
@@ -39,31 +40,89 @@ public class BoxTest extends PApplet {
      * along with this library; if not, write to the Free Software Foundation,
      * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
      */
+
+    PShape[] shapes;
+
+    /**
+     *
+     */
     @Override
     public void setup() {
-        AABB box = AABB.fromMinMax(new Vec3D(1.0f, 1.0f, 1.0f), 
-                new Vec3D(-1.0f, -1.0f, -1.0f));
+        size(200, 200, P3D);
+        AABB box = AABB.fromMinMax(new Vec3D(50.0f, 50.0f, 50.0f),
+                new Vec3D(-50.0f, -50.0f, -50.0f));
 
         TriangleMesh[] meshArray = new TriangleMesh[1];
-        TriangleMesh mesh0 = (TriangleMesh) box.toMesh();
-        meshArray[0] = mesh0;
+        
+        meshArray[0] = (TriangleMesh) box.toMesh();
         // attempt to create a FileOutputStream and save to it 
+        shapes = meshToRetained(meshArray, true);
 
-        String fileID = "FTest";//+(System.currentTimeMillis()/1000);
-        POVMesh pm = new POVMesh(this);//, Textures.MIRROR);
-        pm.beginSave(new File(sketchPath(fileID + ".inc")));
-        pm.setTexture(Textures.MIRROR);
-        pm.saveAsMesh(meshArray, false); // calculated normals are crap
-        pm.endSave();
-        exit();
+
+//        String fileID = "FTest";//+(System.currentTimeMillis()/1000);
+//        POVMesh pm = new POVMesh(this);//, Textures.MIRROR);
+//        pm.beginSave(new File(sketchPath(fileID + ".inc")));
+//        pm.setTexture(Textures.MIRROR);
+//        pm.saveAsMesh(meshArray, false); // calculated normals are crap
+//        pm.endSave();
+//        exit();
     }
 
     /**
-     * 
+     *
+     */
+    @Override
+    public void draw() {
+        background(100);
+        translate(width / 2, height / 2, -width / 2);
+        for (PShape sh: shapes){
+        shape(sh);
+        }
+
+    }
+
+    /**
+     *
      * @param args
      */
     static public void main(String args[]) {
-        PApplet.main(new String[]{"--bgcolor=#DFDFDF", "test.BoxTest"});
+        PApplet.main(new String[]{"--bgcolor=#DFDFDF", "test.VBOBoxTest"});
+    }
+
+    PShape meshToRetained(Mesh3D mesh, boolean smth) {
+        PShape retained = createShape(TRIANGLES);
+        retained.enableStyle();
+        retained.fill(200, 200, 200);
+        retained.ambient(50);
+        retained.shininess(10);
+        retained.specular(50);
+        if (smth) {
+            mesh.computeVertexNormals();
+            for (Face f : mesh.getFaces()) {
+                retained.normal(f.a.normal.x, f.a.normal.y, f.a.normal.z);
+                retained.vertex(f.a.x, f.a.y, f.a.z);
+                retained.normal(f.b.normal.x, f.b.normal.y, f.b.normal.z);
+                retained.vertex(f.b.x, f.b.y, f.b.z);
+                retained.normal(f.c.normal.x, f.c.normal.y, f.c.normal.z);
+                retained.vertex(f.c.x, f.c.y, f.c.z);
+            }
+        } else {
+            for (Face f : mesh.getFaces()) {
+                retained.normal(f.normal.x, f.normal.y, f.normal.z);
+                retained.vertex(f.a.x, f.a.y, f.a.z);
+                retained.vertex(f.b.x, f.b.y, f.b.z);
+                retained.vertex(f.c.x, f.c.y, f.c.z);
+            }
+        }
+        retained.end();
+        return retained;
+    }
+
+    PShape[] meshToRetained(Mesh3D[] mesh, boolean smth) {
+        PShape[] shapes = new PShape[mesh.length];
+        for(int i = 0; i<mesh.length; i++){
+        shapes[i] = meshToRetained(mesh[i], smth);
+        }
+        return shapes;
     }
 }
-

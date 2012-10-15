@@ -22,7 +22,6 @@ package povmesh.mesh;
 
 import java.io.File;
 import processing.core.PApplet;
-import processing.event.KeyEvent;
 import toxi.geom.mesh.Face;
 import toxi.geom.mesh.TriangleMesh;
 import toxi.geom.mesh.Vertex;
@@ -33,16 +32,15 @@ import toxi.geom.mesh.Vertex;
  *
  * @author Martin Prout
  */
-
 public class POVMesh {
 
-//    private PrintWriter pw;
     private POVWriter pov;
     private Textures opt;
+    private PApplet parent;
     /**
      *
      */
-    static String VERSION = "0.57";
+    static String VERSION = "0.58";
 
     /**
      * Default constructor this mesh no texture
@@ -50,20 +48,18 @@ public class POVMesh {
      * @param app
      */
     public POVMesh(PApplet app) {
-        app.registerMethod("dispose", this);
-        app.registerMethod("keyEvent", this);
-
+        parent = app;
+        parent.registerMethod("dispose", this);
+        //setActive(true);
     }
 
-    /**
-     * Default constructor this mesh no texture
-     *
-     * @param app
-     * @param opt
-     */
-//    public POVMesh(PApplet app, Textures opt) {
-//        app.registerDispose(this);
-//        this.opt = opt;
+//    private void setActive(boolean active) {
+//        if (active) {
+//            parent.registerMethod("dispose", this);
+//            parent.registerMethod("keyEvent", this);
+//        } else {
+//            parent.unregisterMethod("keyEvent", this);
+//        }
 //    }
     /**
      * Allows the option to change texture option per mesh
@@ -83,7 +79,7 @@ public class POVMesh {
     public void saveAsPOV(TriangleMesh[] meshArray) {
         saveAsMesh(meshArray, true);
     }
-    
+
     /**
      *
      * @param meshArray
@@ -174,14 +170,11 @@ public class POVMesh {
             pov.beginIndices(mesh.faces.size());
             for (Face f : mesh.faces) {
                 pov.face(f.b.id + vOffset, f.a.id + vOffset, f.c.id + vOffset);
-
             }
             pov.endSection();
             pov.endSave();
         }
     }
-
-
 
     /**
      * Start writing *.inc file
@@ -199,29 +192,23 @@ public class POVMesh {
      */
     public void endSave() {
         pov.endForeground();
-        //pw.flush();
-        //pw.close();
-    }
-    
-    
-    /**
-     *
-     * @param e
-     */
-    public void keyEvent(KeyEvent e){
-        if (e.getAction() == KeyEvent.RELEASED){
-            switch(e.getKey()){
-                case 't':
-                case 'T':
-                    System.out.println("tracing");
-                    break;
-            
-            }
-        
-        }
-    
     }
 
+//    /**
+//     *
+//     * @param e
+//     */
+//    public void keyEvent(KeyEvent e) {
+//        if (e.getAction() == KeyEvent.RELEASED) {
+//            switch (e.getKey()) {
+//                case 't':
+//                case 'T':
+//                    status = Tracing.EXPORTING;
+//                    System.out.println("tracing");
+//                    break;
+//            }
+//        }
+//    }
     /**
      * Required by processing
      */

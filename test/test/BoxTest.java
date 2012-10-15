@@ -1,22 +1,27 @@
 package test;
 
+
+
 import java.io.File;
 import povmesh.mesh.POVMesh;
 import povmesh.mesh.Textures;
+import povmesh.vbo.MeshToVBO;
+import povmesh.util.*;
 import processing.core.PApplet;
+import processing.core.PShape;
 import toxi.geom.AABB;
 import toxi.geom.Vec3D;
 import toxi.geom.mesh.TriangleMesh;
 
 /**
- * 
+ *
  * @author Martin Prout
  */
 public class BoxTest extends PApplet {
 
     /**
      * <p>POVSimpleExport demonstrates how to save a model as PovRAY mesh2
-     * format to a generic Java PrintWriter NB: uses createWriter convenience 
+     * format to a generic Java PrintWriter NB: uses createWriter convenience
      * method</p>
      */
 
@@ -39,15 +44,27 @@ public class BoxTest extends PApplet {
      * along with this library; if not, write to the Free Software Foundation,
      * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
      */
+    public MeshToVBO gfx;
+    TriangleMesh mesh0;
+    PShape aligned;
+    ArcBall arcball;
+    
+    /**
+     *
+     */
     @Override
     public void setup() {
-        AABB box = AABB.fromMinMax(new Vec3D(1.0f, 1.0f, 1.0f), 
-                new Vec3D(-1.0f, -1.0f, -1.0f));
+        size(200, 200, P3D);
+        arcball = new ArcBall(this);
+        AABB box = AABB.fromMinMax(new Vec3D(50.0f, 50.0f, 50.0f),
+                new Vec3D(-50.0f, -50.0f, -50.0f));
 
         TriangleMesh[] meshArray = new TriangleMesh[1];
-        TriangleMesh mesh0 = (TriangleMesh) box.toMesh();
+        mesh0 = (TriangleMesh) box.toMesh();
         meshArray[0] = mesh0;
         // attempt to create a FileOutputStream and save to it 
+        gfx = new MeshToVBO(this);
+
 
         String fileID = "FTest";//+(System.currentTimeMillis()/1000);
         POVMesh pm = new POVMesh(this);//, Textures.MIRROR);
@@ -55,15 +72,27 @@ public class BoxTest extends PApplet {
         pm.setTexture(Textures.MIRROR);
         pm.saveAsMesh(meshArray, false); // calculated normals are crap
         pm.endSave();
-        exit();
+        //exit();
+        aligned = gfx.meshToVBO(mesh0, false);
+        
     }
 
     /**
-     * 
+     *
+     */
+    @Override
+    public void draw() {
+        background(100);
+        translate(width / 2, height / 2, -width / 2);
+        arcball.update();
+        shape(aligned);
+    }
+
+    /**
+     *
      * @param args
      */
     static public void main(String args[]) {
-        PApplet.main(new String[]{"--bgcolor=#DFDFDF", "test.BoxTest"});
+        PApplet.main(new String[]{"test.BoxTest"});
     }
 }
-

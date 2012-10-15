@@ -72,7 +72,7 @@ public class POVWriter implements POVInterface {
         this.opt = Textures.RAW;
         spath = meshObj.getParent();
         try {
-            this.povWriter = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(meshObj),"UTF8")));
+            this.povWriter = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(meshObj), "UTF8")));
         } catch (IOException ex) {
             Logger.getLogger(POVWriter.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -399,24 +399,26 @@ public class POVWriter implements POVInterface {
         povWriter.append(eol);
         povWriter.append("}");
         povWriter.append(eol);
-        
+
         String outFile = spath + File.separator + "my_texture.inc";
         // if (declaredOpt.size() > 1) { // guard against only RAW
         try {
             PrintWriter pw;
-            pw = new PrintWriter(new File(outFile),"UTF8");
-            pw.append(String.format("// %s%s", outFile, eol));
-            for (Textures dopt : declaredOpt) {
-                declareTexture(pw, dopt);
+            pw = new PrintWriter(new File(outFile), "UTF8");
+            try {
+                pw.append(String.format("// %s%s", outFile, eol));
+                for (Textures dopt : declaredOpt) {
+                    declareTexture(pw, dopt);
+                }
+            } finally {
+                pw.flush();
+                pw.close();
+                povWriter.flush();
+                povWriter.close();
             }
-            pw.flush();
-            pw.close();
         } catch (IOException ex) {
             Logger.getLogger(POVWriter.class.getName()).log(Level.SEVERE, null, ex);
-        } 
-        // } // but maybe not
-        povWriter.flush();
-        povWriter.close();
+        }
 
     }
 
