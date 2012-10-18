@@ -37,6 +37,7 @@ public class POVWriter implements POVInterface {
 
     final String COMMA = ", ";
     final String eol = System.getProperty("line.separator");
+    private float adjust = 0f;
     /**
      *
      */
@@ -141,6 +142,26 @@ public class POVWriter implements POVInterface {
                 break;
         }
         povWriter.println("}"); // end of mesh2 
+    }
+
+    /**
+     * 
+     * @param min
+     * @param max
+     */
+    public void boundingBox(Vec3D min, Vec3D max) {
+        float lowest = (min.y * -1 < max.y * -1)? min.y : max.y;
+        adjust = (Math.abs(0 - lowest) > 0.0001f)? lowest : 0;
+        StringBuilder pov = new StringBuilder("// bounding_box ");
+        pov.append('<').append(min.x);
+        pov.append(COMMA).append(min.y * -1 + adjust);
+        pov.append(COMMA).append(min.z * -1);
+        pov.append('>').append(COMMA).append(' ');
+        pov.append('<').append(max.x);
+        pov.append(COMMA).append(max.y * -1 + adjust);
+        pov.append(COMMA).append(max.z * - 1);
+        pov.append('>').append(eol).append(eol);
+        povWriter.print(pov);
     }
 
     /**
@@ -370,7 +391,7 @@ public class POVWriter implements POVInterface {
         StringBuilder my_vector = new StringBuilder(120);
         my_vector.append('\t').append('<');
         my_vector.append(v.x).append(COMMA);
-        my_vector.append(v.y * -1).append(COMMA);
+        my_vector.append(v.y * -1 + adjust).append(COMMA);
         my_vector.append(v.z * -1).append('>');
         return my_vector.append(COMMA);
     }
@@ -388,15 +409,6 @@ public class POVWriter implements POVInterface {
      * "my_texture.inc" file
      */
     protected void endForeground() {
-        povWriter.append("rotate");
-        povWriter.append(buildVector(0.0f, 15.0f, 0.0f));
-        povWriter.append(eol);
-        povWriter.append("scale");
-        povWriter.append(buildVector(0.5f, 0.5f, 0.5f));
-        povWriter.append(eol);
-        povWriter.append("translate");
-        povWriter.append(buildVector(0.0f, 0.0f, 0.0f));
-        povWriter.append(eol);
         povWriter.append("}");
         povWriter.append(eol);
 

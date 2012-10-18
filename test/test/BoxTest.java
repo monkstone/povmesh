@@ -1,12 +1,10 @@
 package test;
 
-
-
 import java.io.File;
 import povmesh.mesh.POVMesh;
 import povmesh.mesh.Textures;
-import povmesh.vbo.MeshToVBO;
 import povmesh.util.*;
+import povmesh.vbo.MeshToVBO;
 import processing.core.PApplet;
 import processing.core.PShape;
 import toxi.geom.AABB;

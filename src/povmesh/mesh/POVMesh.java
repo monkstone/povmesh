@@ -22,9 +22,10 @@ package povmesh.mesh;
 
 import java.io.File;
 import processing.core.PApplet;
-import toxi.geom.mesh.Face;
-import toxi.geom.mesh.TriangleMesh;
-import toxi.geom.mesh.Vertex;
+import toxi.geom.AABB;
+import toxi.geom.Vec3D;
+
+
 
 /**
  * This class provides access to underlying TriangleMesh parameters to allow
@@ -76,7 +77,7 @@ public class POVMesh {
      *
      * @param meshArray
      */
-    public void saveAsPOV(TriangleMesh[] meshArray) {
+    public void saveAsPOV(toxi.geom.mesh.TriangleMesh[] meshArray) {
         saveAsMesh(meshArray, true);
     }
 
@@ -85,7 +86,7 @@ public class POVMesh {
      * @param meshArray
      * @param modulus
      */
-    public void saveAsPOV(TriangleMesh[] meshArray, int modulus) {
+    public void saveAsPOV(toxi.geom.mesh.TriangleMesh[] meshArray, int modulus) {
         saveAsMesh(meshArray, true);
     }
 
@@ -95,7 +96,7 @@ public class POVMesh {
      *
      * @param mesh
      */
-    public void saveAsPOV(TriangleMesh mesh) {
+    public void saveAsPOV(toxi.geom.mesh.TriangleMesh mesh) {
         saveAsPOV(mesh, true);
     }
 
@@ -107,7 +108,11 @@ public class POVMesh {
      * @param mesh
      * @param saveNormals boolean
      */
-    public void saveAsPOV(TriangleMesh mesh, boolean saveNormals) {
+    public void saveAsPOV(toxi.geom.mesh.TriangleMesh mesh, boolean saveNormals) {
+        AABB boundingBox = mesh.getBoundingBox();
+        Vec3D min = boundingBox.getMin();
+        Vec3D max = boundingBox.getMax();
+        pov.boundingBox(min, max); 
         if (opt != pov.getTexture()) {
             pov.setTexture(opt);
         }
@@ -115,7 +120,7 @@ public class POVMesh {
         int vOffset = pov.getCurrVertexOffset();
         // vertices
         pov.total(mesh.vertices.size());
-        for (Vertex v : mesh.vertices.values()) {
+        for (toxi.geom.mesh.Vertex v : mesh.vertices.values()) {
             pov.vertex(v);
         }
         pov.endSection();
@@ -123,13 +128,13 @@ public class POVMesh {
         if (saveNormals) {
             // normals
             pov.beginNormals(mesh.vertices.size());
-            for (Vertex v : mesh.vertices.values()) {
+            for (toxi.geom.mesh.Vertex v : mesh.vertices.values()) {
                 pov.normal(v.normal.getNormalized());
             }
             pov.endSection();
         }
         pov.beginIndices(mesh.faces.size());
-        for (Face f : mesh.faces) {
+        for (toxi.geom.mesh.Face f : mesh.faces) {
             pov.face(f.b.id + vOffset, f.a.id + vOffset, f.c.id + vOffset);
 
         }
@@ -145,16 +150,16 @@ public class POVMesh {
      * @param meshArray
      * @param saveNormals boolean
      */
-    public void saveAsMesh(TriangleMesh[] meshArray, boolean saveNormals) {
+    public void saveAsMesh(toxi.geom.mesh.TriangleMesh[] meshArray, boolean saveNormals) {
         if (opt != pov.getTexture()) {
             pov.setTexture(opt);
         }
-        for (TriangleMesh mesh : meshArray) {
+        for (toxi.geom.mesh.TriangleMesh mesh : meshArray) {
             pov.beginMesh2(mesh.name);
             int vOffset = pov.getCurrVertexOffset();
             // vertices
             pov.total(mesh.vertices.size());
-            for (Vertex v : mesh.vertices.values()) {
+            for (toxi.geom.mesh.Vertex v : mesh.vertices.values()) {
                 pov.vertex(v);
             }
             pov.endSection();
@@ -162,13 +167,13 @@ public class POVMesh {
             if (saveNormals) {
                 // normals
                 pov.beginNormals(mesh.vertices.size());
-                for (Vertex v : mesh.vertices.values()) {
+                for (toxi.geom.mesh.Vertex v : mesh.vertices.values()) {
                     pov.normal(v.normal.getNormalized());
                 }
                 pov.endSection();
             }
             pov.beginIndices(mesh.faces.size());
-            for (Face f : mesh.faces) {
+            for (toxi.geom.mesh.Face f : mesh.faces) {
                 pov.face(f.b.id + vOffset, f.a.id + vOffset, f.c.id + vOffset);
             }
             pov.endSection();
