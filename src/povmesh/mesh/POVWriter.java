@@ -145,7 +145,10 @@ public class POVWriter implements POVInterface {
     }
 
     /**
-     * 
+     * A side effect of this method is to set the value of the y adjust. This 
+     * value is used to set the lowest value of y to be 0, and hence expect all 
+     * other y values to be positive (to cope with the totally crap convention 
+     * in processing where up is negative)
      * @param min
      * @param max
      */

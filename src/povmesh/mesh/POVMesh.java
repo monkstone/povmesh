@@ -82,7 +82,8 @@ public class POVMesh {
     }
 
     /**
-     *
+     * This is for an edge case where modulus could be used to determine repeat
+     * color/texture
      * @param meshArray
      * @param modulus
      */
