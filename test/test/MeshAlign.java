@@ -6,6 +6,10 @@ import processing.core.*;
 import toxi.geom.*;
 import toxi.geom.mesh.*;
 
+/**
+ *
+ * @author sid
+ */
 public class MeshAlign extends PApplet {
 
     /**
@@ -40,6 +44,9 @@ public class MeshAlign extends PApplet {
     float SCALE = 200;
     TriangleMesh[] boxes = new TriangleMesh[600];
 
+    /**
+     *
+     */
     @Override
     public void setup() {
         size(600, 600, P3D);
@@ -69,6 +76,9 @@ public class MeshAlign extends PApplet {
         }
     }
 
+    /**
+     *
+     */
     @Override
     public void draw() {
         background(0.1f, 0.1f, 0.2f);
@@ -83,7 +93,10 @@ public class MeshAlign extends PApplet {
         }
     }
     
-        public void setupLights() {
+        /**
+     *
+     */
+    public void setupLights() {
         lights();
         ambientLight(0.4f, 0.4f, 0.4f);
         directionalLight(0.2f, 0.2f, 0.2f, -1, -1, 1);
@@ -93,6 +106,10 @@ public class MeshAlign extends PApplet {
         shininess(0.3f);
     }
 
+    /**
+     *
+     * @param passedArgs
+     */
     static public void main(String[] passedArgs) {
         String[] appletArgs = new String[]{"test.MeshAlign"};
         if (passedArgs != null) {

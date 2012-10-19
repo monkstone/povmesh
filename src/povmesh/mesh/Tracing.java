@@ -9,8 +9,17 @@ package povmesh.mesh;
  * @author sid
  */
 public enum Tracing {
+    /**
+     *
+     */
     INIT,
+    /**
+     *
+     */
     EXPORTING,
+    /**
+     *
+     */
     EXPORTED
     
 }

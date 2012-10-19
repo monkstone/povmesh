@@ -10,6 +10,10 @@ import toxi.geom.*;
 import toxi.geom.mesh.*;
 import toxi.volume.*;
 
+/**
+ *
+ * @author sid
+ */
 public class VBOTentacle extends PApplet {
 
     /**
@@ -20,6 +24,9 @@ public class VBOTentacle extends PApplet {
     PShape tentacle;
     ArcBall arcball;
 
+    /**
+     *
+     */
     @Override
     public void setup() {
         size(500, 500, P3D);
@@ -62,6 +69,9 @@ public class VBOTentacle extends PApplet {
         tentacle.specular(40);
     }
 
+    /**
+     *
+     */
     @Override
     public void draw() {
         background(100);
@@ -72,6 +82,9 @@ public class VBOTentacle extends PApplet {
         shape(tentacle);
     }
 
+    /**
+     *
+     */
     public void setupLights() {
         lights();
         ambientLight(80, 80, 80);
@@ -79,6 +92,9 @@ public class VBOTentacle extends PApplet {
         lightSpecular(30, 30, 30);
     }
 
+    /**
+     *
+     */
     @Override
     public void keyPressed() {
         if (key == 'e') {
@@ -95,6 +111,10 @@ public class VBOTentacle extends PApplet {
         }
     }
 
+    /**
+     *
+     * @param passedArgs
+     */
     static public void main(String[] passedArgs) {
         String[] appletArgs = new String[]{"test.VBOTentacle"};
         if (passedArgs != null) {

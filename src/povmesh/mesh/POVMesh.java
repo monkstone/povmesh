@@ -25,8 +25,6 @@ import processing.core.PApplet;
 import toxi.geom.AABB;
 import toxi.geom.Vec3D;
 
-
-
 /**
  * This class provides access to underlying TriangleMesh parameters to allow
  * export in PovRAY mesh2 format (with or without normals)
@@ -51,17 +49,8 @@ public class POVMesh {
     public POVMesh(PApplet app) {
         parent = app;
         parent.registerMethod("dispose", this);
-        //setActive(true);
     }
 
-//    private void setActive(boolean active) {
-//        if (active) {
-//            parent.registerMethod("dispose", this);
-//            parent.registerMethod("keyEvent", this);
-//        } else {
-//            parent.unregisterMethod("keyEvent", this);
-//        }
-//    }
     /**
      * Allows the option to change texture option per mesh
      *
@@ -78,16 +67,6 @@ public class POVMesh {
      * @param meshArray
      */
     public void saveAsPOV(toxi.geom.mesh.TriangleMesh[] meshArray) {
-        saveAsMesh(meshArray, true);
-    }
-
-    /**
-     * This is for an edge case where modulus could be used to determine repeat
-     * color/texture
-     * @param meshArray
-     * @param modulus
-     */
-    public void saveAsPOV(toxi.geom.mesh.TriangleMesh[] meshArray, int modulus) {
         saveAsMesh(meshArray, true);
     }
 
@@ -113,7 +92,7 @@ public class POVMesh {
         AABB boundingBox = mesh.getBoundingBox();
         Vec3D min = boundingBox.getMin();
         Vec3D max = boundingBox.getMax();
-        pov.boundingBox(min, max); 
+        pov.boundingBox(min, max);
         if (opt != pov.getTexture()) {
             pov.setTexture(opt);
         }
@@ -152,11 +131,19 @@ public class POVMesh {
      * @param saveNormals boolean
      */
     public void saveAsMesh(toxi.geom.mesh.TriangleMesh[] meshArray, boolean saveNormals) {
+        AABB boundingBox;
+        Vec3D min;
+        Vec3D max;
+
         if (opt != pov.getTexture()) {
             pov.setTexture(opt);
         }
         for (toxi.geom.mesh.TriangleMesh mesh : meshArray) {
             pov.beginMesh2(mesh.name);
+            boundingBox = mesh.getBoundingBox();
+            min = boundingBox.getMin();
+            max = boundingBox.getMax();
+            pov.boundingBox(min, max);
             int vOffset = pov.getCurrVertexOffset();
             // vertices
             pov.total(mesh.vertices.size());

@@ -157,6 +157,9 @@ public class ImplicitFunction extends PApplet {
         }
     }
 
+    /**
+     *
+     */
     public void setupLights() {
         lights();
         ambientLight(80, 80, 80);

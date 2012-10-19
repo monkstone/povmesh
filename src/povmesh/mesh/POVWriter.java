@@ -37,7 +37,8 @@ public class POVWriter implements POVInterface {
 
     final String COMMA = ", ";
     final String eol = System.getProperty("line.separator");
-    private float adjust = 0f;
+    private float adjust = 0.0f; //we must only hava one adjustment
+    private boolean adjustIsSet = false;
     /**
      *
      */
@@ -148,23 +149,21 @@ public class POVWriter implements POVInterface {
      * A side effect of this method is to set the value of the y adjust. This 
      * value is used to set the lowest value of y to be 0, and hence expect all 
      * other y values to be positive (to cope with the totally crap convention 
-     * in processing where up is negative)
+     * in processing where up is negative). Works best for a single mesh object
+     * in the sketch, or when lowest object in sketch is given first.
      * @param min
      * @param max
      */
     public void boundingBox(Vec3D min, Vec3D max) {
         float lowest = (min.y * -1 < max.y * -1)? min.y : max.y;
-        adjust = (Math.abs(0 - lowest) > 0.0001f)? lowest : 0;
-        StringBuilder pov = new StringBuilder("// bounding_box ");
-        pov.append('<').append(min.x);
-        pov.append(COMMA).append(min.y * -1 + adjust);
-        pov.append(COMMA).append(min.z * -1);
-        pov.append('>').append(COMMA).append(' ');
-        pov.append('<').append(max.x);
-        pov.append(COMMA).append(max.y * -1 + adjust);
-        pov.append(COMMA).append(max.z * - 1);
-        pov.append('>').append(eol).append(eol);
-        povWriter.print(pov);
+        if (!adjustIsSet) {  // adjust must only be set once for a sketch
+            adjust = (Math.abs(0 - lowest) > 0.0001f)? lowest : adjust;
+            adjustIsSet = true;
+        }
+        StringBuilder pov = new StringBuilder(100);
+        pov.append("// bounding_box").append(buildVector(min));             
+        pov.append(buildVector(max)).append(eol);
+        povWriter.print(pov.append(eol));
     }
 
     /**
@@ -351,20 +350,20 @@ public class POVWriter implements POVInterface {
     }
 
     /**
-     * This version is strictly for scale, translate and rotate
+     * This version was strictly for scale, translate and rotate
      *
      * @param a
      * @param b
      * @param c
      * @return povray vector (floats)
      */
-    private StringBuilder buildVector(float a, float b, float c) {
-        StringBuilder my_vector = new StringBuilder(120);
-        my_vector.append('<');
-        my_vector.append(a).append(COMMA);
-        my_vector.append(b).append(COMMA);
-        return my_vector.append(c).append('>');
-    }
+//    private StringBuilder buildVector(float a, float b, float c) {
+//        StringBuilder my_vector = new StringBuilder(120);
+//        my_vector.append('<');
+//        my_vector.append(a).append(COMMA);
+//        my_vector.append(b).append(COMMA);
+//        return my_vector.append(c).append('>');
+//    }
 
     /**
      * This version is strictly for face indices (possibly normals/uv)
@@ -385,8 +384,9 @@ public class POVWriter implements POVInterface {
 
     /**
      * The Y and Z coordinates are multiplied by -1 to handle the conversion of
-     * processing coordinate system to PovRAY coordinate system.
-     *
+     * processing coordinate system to PovRAY coordinate system. Further the y
+     * coordinate is adjusted to give non-negative values (but only if the object 
+     * with lowest value is processed first)
      * @param v
      * @return povray vector
      */
