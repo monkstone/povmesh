@@ -47,6 +47,11 @@ public class BoxTest extends PApplet {
     PShape aligned;
     ArcBall arcball;
     
+     @Override
+    public void settings() {
+        size(200, 200, P3D);
+    }
+    
     /**
      *
      */

@@ -100,12 +100,12 @@ public class ArcBall {
         int x = e.getX();
         int y = e.getY();
         switch (e.getAction()) {
-            case (MouseEvent.PRESSED):
+            case (MouseEvent.PRESS):
                 v_down = mouse2sphere(x, y);
                 q_down.set(q_now);
                 q_drag.reset();
                 break;
-            case (MouseEvent.DRAGGED):
+            case (MouseEvent.DRAG):
                 v_drag = mouse2sphere(x, y);
                 q_drag.set(AVector.dot(v_down, v_drag), v_down.cross(v_drag));
                 break;
@@ -119,7 +119,7 @@ public class ArcBall {
      * @param e
      */
     public void keyEvent(KeyEvent e) {
-        if (e.getAction() == KeyEvent.PRESSED) {
+        if (e.getAction() == KeyEvent.PRESS) {
             switch (e.getKey()) {
                 case 'x':
                     constrain(Constrain.XAXIS);
@@ -132,7 +132,7 @@ public class ArcBall {
                     break;
             }
         }
-        if (e.getAction() == KeyEvent.RELEASED) {
+        if (e.getAction() == KeyEvent.RELEASE) {
             constrain(Constrain.FREE);
         }
     }
@@ -163,11 +163,11 @@ public class ArcBall {
                 this.parent.registerMethod("dispose", this);
                 this.parent.registerMethod("mouseEvent", this);
                 this.parent.registerMethod("keyEvent", this);
-                this.parent.addMouseWheelListener(wheelHandler);
+                //this.parent.(wheelHandler);
             } else {
                 this.parent.unregisterMethod("mouseEvent", this);
                 this.parent.unregisterMethod("keyEvent", this);
-                this.parent.frame.removeMouseWheelListener(wheelHandler);
+                //this.parent.frame.removeMouseWheelListener(wheelHandler);
             }
         }
     }
