@@ -59,18 +59,22 @@ public class ImplicitFunction extends PApplet {
     float currZoom = 1;
     boolean isWireframe;
 
+    @Override
+    public void settings() {
+        size(1280, 720, P3D);
+    }
+
     /**
      *
      */
     @Override
     public void setup() {
-        size(1280, 720, P3D);
         arcball = new ArcBall(this);
         gfx = new MeshToVBO(this); // tool to convert mesh to an vbo object (PShape)
         VolumetricSpace vol = new EvaluatingVolume(new Vec3D(400, 400, 400), RES, MAX_ISO);
-        IsoSurface surface = new HashIsoSurface(vol);
+        IsoSurface isosurface = new HashIsoSurface(vol);
         mesh = new WETriangleMesh("iso0");
-        surface.computeSurfaceMesh(mesh, ISO);
+        isosurface.computeSurfaceMesh(mesh, ISO);
         noStroke();
         implicit = gfx.meshToVBO(mesh, true);
     }

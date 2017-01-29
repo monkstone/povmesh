@@ -11,14 +11,15 @@ import toxi.geom.mesh.TriangleMesh;
 import toxi.processing.ToxiclibsSupport;
 
 /**
- * 
+ *
  * @author Martin Prout
  */
 public class FTestPOV extends PApplet {
 
     /**
-     * <p>POVSimpleExport demonstrates how to save a model as PovRAY mesh2
-     * format to a generic Java PrintWriter NB: uses createWriter convenience 
+     * <p>
+     * POVSimpleExport demonstrates how to save a model as PovRAY mesh2 format
+     * to a generic Java PrintWriter NB: uses createWriter convenience
      * method</p>
      */
 
@@ -43,21 +44,26 @@ public class FTestPOV extends PApplet {
      */
     ToxiclibsSupport gfx;
     TriangleMesh mesh0, mesh1, mesh2;
+
+    @Override
+    public void settings() {
+        size(200, 200, P3D);
+    }
+
     /**
      *
      */
     @Override
     public void setup() {
-        size(200, 200, P3D);
         gfx = new ToxiclibsSupport(this);
         // define a rounded cube using the SuperEllipsoid surface function
-        AABB vert = AABB.fromMinMax(new Vec3D(-1.0f, -3.5f, -1.0f), 
+        AABB vert = AABB.fromMinMax(new Vec3D(-1.0f, -3.5f, -1.0f),
                 new Vec3D(1.0f, 3.5f, 1.0f));
-        AABB box = AABB.fromMinMax(new Vec3D(1.0f, 1.5f, -1.0f), 
+        AABB box = AABB.fromMinMax(new Vec3D(1.0f, 1.5f, -1.0f),
                 new Vec3D(3.0f, 3.5f, 1.0f));
-        AABB box2 = AABB.fromMinMax(new Vec3D(1.0f, -2.5f, -1.0f), 
+        AABB box2 = AABB.fromMinMax(new Vec3D(1.0f, -2.5f, -1.0f),
                 new Vec3D(3.0f, -0.5f, 1.0f));
-    //    TriangleMesh[] meshArray = new TriangleMesh[3];
+        //    TriangleMesh[] meshArray = new TriangleMesh[3];
         mesh0 = (TriangleMesh) box.toMesh();
         mesh1 = ((TriangleMesh) vert.toMesh());
         mesh2 = ((TriangleMesh) box2.toMesh());
@@ -77,23 +83,23 @@ public class FTestPOV extends PApplet {
 //        pm.setTexture(Textures.WHITE);
 //        pm.saveAsPOV(mesh2, false); 
         pm.endSave();
-     //   exit();
+        //   exit();
     }
-    
+
     /**
      *
      */
     @Override
-    public void draw(){        
-        translate(width/2, height/2);
+    public void draw() {
+        translate(width / 2, height / 2);
         scale(10);
         rotateY(radians(20));
         gfx.chooseStrokeFill(false, TColor.WHITE, TColor.RED);
-        gfx.mesh(mesh0);    
+        gfx.mesh(mesh0);
     }
 
     /**
-     * 
+     *
      * @param args
      */
     static public void main(String args[]) {

@@ -35,7 +35,7 @@ public class POVMesh {
 
     private POVWriter pov;
     private Textures opt;
-    private PApplet parent;
+    private final PApplet parent;
     /**
      *
      */
@@ -100,24 +100,23 @@ public class POVMesh {
         int vOffset = pov.getCurrVertexOffset();
         // vertices
         pov.total(mesh.vertices.size());
-        for (toxi.geom.mesh.Vertex v : mesh.vertices.values()) {
+        mesh.vertices.values().forEach((v) -> {
             pov.vertex(v);
-        }
+        });
         pov.endSection();
         // faces
         if (saveNormals) {
             // normals
             pov.beginNormals(mesh.vertices.size());
-            for (toxi.geom.mesh.Vertex v : mesh.vertices.values()) {
+            mesh.vertices.values().forEach((v) -> {
                 pov.normal(v.normal.getNormalized());
-            }
+            });
             pov.endSection();
         }
         pov.beginIndices(mesh.faces.size());
-        for (toxi.geom.mesh.Face f : mesh.faces) {
+        mesh.faces.forEach((f) -> {
             pov.face(f.b.id + vOffset, f.a.id + vOffset, f.c.id + vOffset);
-
-        }
+        });
         pov.endSection();
         pov.endSave();
     }
@@ -147,23 +146,23 @@ public class POVMesh {
             int vOffset = pov.getCurrVertexOffset();
             // vertices
             pov.total(mesh.vertices.size());
-            for (toxi.geom.mesh.Vertex v : mesh.vertices.values()) {
+            mesh.vertices.values().forEach((v) -> {
                 pov.vertex(v);
-            }
+            });
             pov.endSection();
             // faces
             if (saveNormals) {
                 // normals
                 pov.beginNormals(mesh.vertices.size());
-                for (toxi.geom.mesh.Vertex v : mesh.vertices.values()) {
+                mesh.vertices.values().forEach((v) -> {
                     pov.normal(v.normal.getNormalized());
-                }
+                });
                 pov.endSection();
             }
             pov.beginIndices(mesh.faces.size());
-            for (toxi.geom.mesh.Face f : mesh.faces) {
+            mesh.faces.forEach((f) -> {
                 pov.face(f.b.id + vOffset, f.a.id + vOffset, f.c.id + vOffset);
-            }
+            });
             pov.endSection();
             pov.endSave();
         }

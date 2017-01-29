@@ -8,7 +8,6 @@ import processing.core.PShape;
 import toxi.geom.AABB;
 import toxi.geom.Matrix4x4;
 import toxi.geom.Vec3D;
-import toxi.geom.mesh.Face;
 import toxi.geom.mesh.Mesh3D;
 import toxi.geom.mesh.TriangleMesh;
 
@@ -49,12 +48,16 @@ public class VBOMeshAlign extends PApplet {
     PShape[] shapes;
     boolean record = false;
 
+    @Override
+    public void settings() {
+        size(400, 400, P3D);
+    }
+
     /**
      *
      */
     @Override
     public void setup() {
-        size(400, 400, P3D);
         for (int i = 0; i < boxes.length; i++) {
             // create a new direction vector for each box
             Vec3D dir = new Vec3D(cos(i * TWO_PI / 75), sin(i * TWO_PI / 50), sin(i * TWO_PI / 25)).normalize();
@@ -124,31 +127,47 @@ public class VBOMeshAlign extends PApplet {
     }
 
     PShape meshToVBO(Mesh3D mesh, boolean smth) {
-        PShape retained = createShape(TRIANGLES);
-        retained.enableStyle();
+
+        PShape retained = createShape();
+        // retained.disableStyle();
+
+        retained.beginShape(TRIANGLES);
         retained.fill(random(255), random(255), random(255));
-        retained.ambient(50);
-        retained.shininess(10);
-        retained.specular(50);
         if (smth) {
             mesh.computeVertexNormals();
-            for (Face f : mesh.getFaces()) {
+            mesh.getFaces().stream().map((f) -> {
                 retained.normal(f.a.normal.x, f.a.normal.y, f.a.normal.z);
+                return f;
+            }).map((f) -> {
                 retained.vertex(f.a.x, f.a.y, f.a.z);
+                return f;
+            }).map((f) -> {
                 retained.normal(f.b.normal.x, f.b.normal.y, f.b.normal.z);
+                return f;
+            }).map((f) -> {
                 retained.vertex(f.b.x, f.b.y, f.b.z);
+                return f;
+            }).map((f) -> {
                 retained.normal(f.c.normal.x, f.c.normal.y, f.c.normal.z);
+                return f;
+            }).forEachOrdered((f) -> {
                 retained.vertex(f.c.x, f.c.y, f.c.z);
-            }
+            });
         } else {
-            for (Face f : mesh.getFaces()) {
+            mesh.getFaces().stream().map((f) -> {
                 retained.normal(f.normal.x, f.normal.y, f.normal.z);
+                return f;
+            }).map((f) -> {
                 retained.vertex(f.a.x, f.a.y, f.a.z);
+                return f;
+            }).map((f) -> {
                 retained.vertex(f.b.x, f.b.y, f.b.z);
+                return f;
+            }).forEachOrdered((f) -> {
                 retained.vertex(f.c.x, f.c.y, f.c.z);
-            }
+            });
         }
-        retained.end();
+        retained.endShape();
         return retained;
     }
 
